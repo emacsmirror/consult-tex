@@ -1,4 +1,4 @@
-;;;; consult-tex.el --- Consult powered completion for tex -*- lexical-binding: t -*-
+;;; consult-tex.el --- Consult powered completion for tex -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023 Titus Pinta
 
