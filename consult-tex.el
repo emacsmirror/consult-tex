@@ -51,7 +51,8 @@
 (defun consult-tex-reference ()
   "Use consult to find a reference."
   (interactive)
-  (push-mark)
+  (push-mark (point) t)
+  (when (fboundp 'evil--jumps-push) (evil--jumps-push))
   (goto-char (consult-tex--find-reference)))
 
 
@@ -97,7 +98,8 @@
 (defun consult-tex-citation ()
   "Use consult to find a citation."
   (interactive)
-  (push-mark)
+  (push-mark (point) t)
+  (when (fboundp 'evil--jumps-push) (evil--jumps-push))
   (let ((m (consult-tex--find-citation))
 	(ref-file (consult-tex--find-bibfile)))
     (find-file ref-file)
