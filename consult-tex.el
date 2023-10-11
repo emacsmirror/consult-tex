@@ -6,8 +6,9 @@
 ;; Author: Titus Pinta
 ;; Maintainer: Titus Pinta <titus.pinta@gmail.com>
 ;; Created: 2023
-;; Homepage ??
+;; Version: 0.1
 ;; Package-Requires: ((emacs "28.2") (consult "0.35"))
+;; Homepage: https://gitlab.com/titus.pinta/consult-TeX
 ;; Keywords: consult, tex, latex
 
 
@@ -40,7 +41,6 @@
 ;;  'consult-tex-insert-citation'  Use consult to insert a citation
 
 ;;; TODOs:
-;; write in file comments.
 
 ;;; Code:
 (require 'consult)
