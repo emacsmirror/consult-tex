@@ -41,6 +41,8 @@
 ;;  'consult-tex-insert-citation'  Use consult to insert a citation
 
 ;;; TODOs:
+;; parse bibtex items
+;; have a function to get the bib file name
 
 ;;; Code:
 (require 'consult)
@@ -97,11 +99,7 @@
   (interactive)
   (push-mark)
   (let ((m (consult-tex--find-citation))
-	ref-file)
-    (save-excursion
-      (goto-char 0)
-      (re-search-forward "\\\\bibliography{\\(.*\\)}" nil t))
-    (setq ref-file (format "%s.bib" (match-string-no-properties 1)))
+	(ref-file (consult-tex--find-bibfile)))
     (find-file ref-file)
     (goto-char m)))
 
@@ -111,12 +109,8 @@
   "Use consult to insert a citation."
   (interactive)
   (let ((m (consult-tex--find-citation))
-	ref-file
+	(ref-file (consult-tex--find-bibfile))
 	text)
-    (save-excursion
-      (goto-char 0)
-      (re-search-forward "\\\\bibliography{\\(.*\\)}" nil t))
-    (setq ref-file (format "%s.bib" (match-string-no-properties 1)))
     (with-temp-buffer
       (insert-file-contents ref-file)
       (goto-char (1- m))
@@ -129,29 +123,26 @@
   "Internal function for 'consult-tex-citation'."
   (interactive)
   (let ((bibs ())
-	ref-file)
-    (save-excursion
-      (goto-char 0)
-      (re-search-forward "\\\\bibliography{\\(.*\\)}" nil t))
-    (setq ref-file (format "%s.bib" (match-string-no-properties 1)))
+	(ref-file (consult-tex--find-bibfile)))
     (with-temp-buffer
-      (bibtex-mode)
-      (font-lock-mode 1)
-      (font-lock-update)
-      (line-number-mode 1)
       (insert-file-contents ref-file)
       (goto-char 0)
       (while (re-search-forward "@.*{\\(.*\\)," nil t)
-	(goto-char (match-beginning 1))
-	(push (propertize (match-string 1) 'consult-location
-			  (cons (point-marker) (line-number-at-pos)))
-	      bibs)
-	(setq bibs
-	      (sort bibs
-		    (lambda (a b)
-		      (< (car (get-text-property 0 'consult-location a))
-			 (car (get-text-property 0 'consult-location b))))))
+	(let (bibitem-start bibitem-end bibitem)
+	  (setq bibitem-start (match-beginning 0))
+	  (goto-char (1- (match-beginning 1)))
+	  (save-excursion
+	    (forward-sexp)
+	    (setq bibitem-end (point)))
+	  (setq bibitem
+		(buffer-substring-no-properties bibitem-start bibitem-end))
+	  (push (propertize (consult-tex--parse-bibitem bibitem)
+			    'consult-location (cons (point-marker)
+						    (line-number-at-pos)))
+		bibs)
+	  (forward-sexp))
 	(goto-char (match-end 0)))
+      (setq bibs (reverse bibs))
       (marker-position
        (consult--read
 	bibs
@@ -165,6 +156,27 @@
 	:add-history (thing-at-point 'symbol)
 	:default (car bibs)
 	:state (consult--jump-preview))))))
+
+
+(defun consult-tex--find-bibfile ()
+  "Find the bib file in the current buffer."
+  (interactive)
+  (save-excursion
+    (goto-char 0)
+    (re-search-forward "\\\\bibliography{\\(.*\\)}" nil t))
+  (format "%s.bib" (match-string-no-properties 1)))
+
+
+(defun consult-tex--parse-bibitem (text)
+  "Parse TEXT as a bibitem and return a string representation."
+  (let (auth title (data (match-data)))
+    (string-match "author *= *{\\(.*\\)}" text)
+    (setq auth (match-string 1 text))
+    (string-match "title *= *{\\(.*\\)}" text)
+    (setq title (propertize (match-string 1 text)
+			    'face '(:slant italic)))
+    (set-match-data data)
+    (format "%s %s" auth title)))
 
 (provide 'consult-tex)
 ;;; consult-tex.el ends here
