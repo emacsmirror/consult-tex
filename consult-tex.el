@@ -45,12 +45,15 @@
 ;;; Code:
 (require 'consult)
 
+;;;###autoload
 (defun consult-tex-reference ()
   "Use consult to find a reference."
   (interactive)
   (push-mark)
   (goto-char (consult-tex--find-reference)))
 
+
+;;;###autoload
 (defun consult-tex-insert-reference ()
   "Use consult to insert a reference."
   (interactive)
@@ -59,6 +62,7 @@
 		    (goto-char (consult-tex--find-reference))
 		    (re-search-forward "\\(.*\\)}" nil t)
 		    (match-string-no-properties 1)))))
+
 
 (defun consult-tex--find-reference ()
   "Internal function for 'consult-tex-reference'."
@@ -87,6 +91,7 @@
      :state (consult--jump-preview))))
 
 
+;;;###autoload
 (defun consult-tex-citation ()
   "Use consult to find a citation."
   (interactive)
@@ -101,6 +106,7 @@
     (goto-char m)))
 
 
+;;;###autoload
 (defun consult-tex-insert-citation ()
   "Use consult to insert a citation."
   (interactive)
