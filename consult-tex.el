@@ -68,7 +68,7 @@
 
 
 (defun consult-tex--find-reference ()
-  "Internal function for 'consult-tex-reference'."
+  "Internal function for \\='consult-tex-reference'."
   (interactive)
   (let ((refs ()))
     (save-excursion
@@ -122,7 +122,7 @@
 
 
 (defun consult-tex--find-citation ()
-  "Internal function for 'consult-tex-citation'."
+  "Internal function for \\='consult-tex-citation'."
   (interactive)
   (let ((bibs ())
 	(ref-file (consult-tex--find-bibfile)))
