@@ -171,14 +171,22 @@
 
 (defun consult-tex--parse-bibitem (text)
   "Parse TEXT as a bibitem and return a string representation."
-  (let (auth title (data (match-data)))
-    (string-match "author[[:space:]]*=[[:space:]]*{\\([^}]*\\)}" text)
-    (setq auth (match-string 1 text))
-    (string-match "title[[:space:]]*=[[:space:]]*{\\([^}]*\\)}" text)
-    (setq title (propertize (match-string 1 text)
-			    'face '(:slant italic)))
-    (set-match-data data)
-    (format "%s %s" auth title)))
+  (let (auth-and-title (data (match-data)))
+    (with-temp-buffer
+      (insert text)
+      (dolist (entry '(author title) auth-and-title)
+	(goto-char 0)
+	(message (format "%s[[:space:]]*=[[:space:]]*{?" entry))
+	(re-search-forward (format "%s[[:space:]]*=[[:space:]]*{?" entry))
+	(goto-char (1- (match-end 0)))
+	(forward-sexp)
+	(push (buffer-substring-no-properties (match-end 0) (1- (point)))
+	      auth-and-title))
+      (setf (car auth-and-title)
+	    (propertize (car auth-and-title) 'face '(:slant italic)))
+      (set-match-data data)
+      (format "%s %s" (cadr auth-and-title) (car auth-and-title)))))
+
 
 (provide 'consult-tex)
 ;;; consult-tex.el ends here
