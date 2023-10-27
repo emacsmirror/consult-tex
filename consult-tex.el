@@ -172,9 +172,9 @@
 (defun consult-tex--parse-bibitem (text)
   "Parse TEXT as a bibitem and return a string representation."
   (let (auth title (data (match-data)))
-    (string-match "author *= *{\\(.*\\)}" text)
+    (string-match "author[[:space:]]*=[[:space:]]*{\\([^}]*\\)}" text)
     (setq auth (match-string 1 text))
-    (string-match "title *= *{\\(.*\\)}" text)
+    (string-match "title[[:space:]]*=[[:space:]]*{\\([^}]*\\)}" text)
     (setq title (propertize (match-string 1 text)
 			    'face '(:slant italic)))
     (set-match-data data)
