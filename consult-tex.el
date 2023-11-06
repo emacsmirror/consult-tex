@@ -43,6 +43,8 @@
 ;;; TODOs:
 ;; parse bibtex items
 ;; have a function to get the bib file name
+;; use non braking space
+;;  better readme with images
 
 ;;; Code:
 (require 'consult)
@@ -80,6 +82,16 @@
 	      refs)
 	(goto-char (match-end 0)))
       (setq refs (seq-uniq (reverse refs) #'string=)))
+    ;; The next part sorts the completion candidates such that the first item
+    ;; is the first from above the point.
+    (let ((head refs)
+	  (old refs))
+      (while (< (cdr (get-text-property 0 'consult-location (car refs)))
+		(line-number-at-pos))
+	(setq old refs)
+	(setq refs (cdr refs)))
+      (setf (cdr old) nil)
+      (setq refs (reverse (append refs head))))
     (consult--read
      refs
      :prompt "References:"
