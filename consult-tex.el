@@ -84,6 +84,7 @@
       (setq refs (seq-uniq (reverse refs) #'string=)))
     ;; The next part sorts the completion candidates such that the first item
     ;; is the first from above the point.
+    ;; TODO add a flag here to control this behavior
     (let ((head refs)
 	  (old refs))
       (while (< (cdr (get-text-property 0 'consult-location (car refs)))
