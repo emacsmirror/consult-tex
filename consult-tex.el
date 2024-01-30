@@ -62,7 +62,8 @@
 (defun consult-tex-insert-reference ()
   "Use consult to insert a reference."
   (interactive)
-  (insert (format "\\ref{%s}"
+    (when (eq (char-before) ? ) (delete-char -1))
+  (insert (format "~\\ref{%s}"
 		  (save-excursion
 		    (goto-char (consult-tex--find-reference))
 		    (re-search-forward "\\(.*\\)}" nil t)
@@ -131,7 +132,8 @@
       (goto-char (1- m))
       (re-search-forward "{\\(.*\\)," nil t)
       (setq text (match-string 1)))
-    (insert (format "\\cite{%s}" text))))
+    (when (eq (char-before) ? ) (delete-char -1))
+    (insert (format "~\\cite{%s}" text))))
 
 
 (defun consult-tex--find-citation ()
