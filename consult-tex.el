@@ -88,8 +88,9 @@
     ;; TODO add a flag here to control this behavior
     (let ((head refs)
 	  (old refs))
-      (while (< (cdr (get-text-property 0 'consult-location (car refs)))
-		(line-number-at-pos))
+      (while
+	  (and refs (< (cdr (get-text-property 0 'consult-location (car refs)))
+		       (line-number-at-pos)))
 	(setq old refs)
 	(setq refs (cdr refs)))
       (setf (cdr old) nil)
