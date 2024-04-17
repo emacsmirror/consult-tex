@@ -40,6 +40,9 @@
 ;;  'consult-tex-citation' - Use consult to find a citation
 ;;  'consult-tex-insert-citation'  Use consult to insert a citation
 
+;; The variable provided is
+;;  'consult-tex-version' - Holds the current version
+
 ;;; TODOs:
 ;; parse bibtex items
 ;; have a function to get the bib file name
@@ -48,6 +51,9 @@
 
 ;;; Code:
 (require 'consult)
+
+(defvar consult-tex-version "0.3.0"
+  "Current version of consult-tex.")
 
 ;;;###autoload
 (defun consult-tex-reference ()
