@@ -213,6 +213,28 @@
       (set-match-data data)
       (format "%s %s" (cadr auth-and-title) (car auth-and-title)))))
 
+;; TODO here
+(defun consult-tex-uncited-items ()
+  "Message the bib items that are not cited."
+  (interactive)
+  (message "Uncited items")
+  (let ((bibs ())
+	(uncited ())
+	(ref-file (consult-tex--find-bibfile)))
+    (with-temp-buffer
+      (insert-file-contents ref-file)
+      (goto-char 0)
+      (while (re-search-forward "@.*{\\(.*\\)," nil t)
+	(push
+	 (buffer-substring-no-properties (match-beginning 1) (match-end 1))
+	 bibs)))
+    (dolist (bib bibs)
+      (save-excursion
+	(goto-char 0)
+	(unless (re-search-forward bib nil t)
+	  (message bib)
+	  (push bib uncited))))
+    (length uncited)))
 
 (provide 'consult-tex)
 ;;; consult-tex.el ends here
