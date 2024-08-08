@@ -48,6 +48,7 @@
 ;; have a function to get the bib file name
 ;; use non braking space
 ;;  better readme with images
+;; get the  bib filename if narrow or if tex-master
 
 ;;; Code:
 (require 'consult)
@@ -199,11 +200,14 @@
       (dolist (entry '(author title) auth-and-title)
 	(goto-char 0)
 	(message (format "%s[[:space:]]*=[[:space:]]*{?" entry))
-	(re-search-forward (format "%s[[:space:]]*=[[:space:]]*{?" entry))
-	(goto-char (1- (match-end 0)))
-	(forward-sexp)
-	(push (buffer-substring-no-properties (match-end 0) (1- (point)))
-	      auth-and-title))
+	(if (re-search-forward (format "%s[[:space:]]*=[[:space:]]*{?" entry)
+			       nil t)
+	    (progn
+	      (goto-char (1- (match-end 0)))
+	      (forward-sexp)
+	      (push (buffer-substring-no-properties (match-end 0) (1- (point)))
+		    auth-and-title))
+	  (push (format "No %s" entry) auth-and-title)))
       (setf (car auth-and-title)
 	    (propertize (car auth-and-title) 'face '(:slant italic)))
       (set-match-data data)
