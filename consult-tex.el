@@ -69,7 +69,7 @@
 (defun consult-tex-insert-reference ()
   "Use consult to insert a reference."
   (interactive)
-    (when (eq (char-before) ? ) (delete-char -1))
+  (when (or (eq (char-before) ? ) (eq (char-before) ?~)) (delete-char -1))
   (insert (format "~\\ref{%s}"
 		  (save-excursion
 		    (goto-char (consult-tex--find-reference))
