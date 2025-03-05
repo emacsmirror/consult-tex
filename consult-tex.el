@@ -49,6 +49,7 @@
 ;; use non braking space
 ;;  better readme with images
 ;; get the  bib filename if narrow or if tex-master
+;; if the point is already in a cite block, add the citation to this block
 
 ;;; Code:
 (require 'consult)
