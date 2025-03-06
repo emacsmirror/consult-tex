@@ -50,6 +50,7 @@
 ;;  better readme with images
 ;; get the  bib filename if narrow or if tex-master
 ;; if the point is already in a cite block, add the citation to this block
+;; TODO when inserting a reference use eqref if the point is in a equation
 
 ;;; Code:
 (require 'consult)
@@ -240,6 +241,20 @@
 	  (message bib)
 	  (push bib uncited))))
     (length uncited)))
+
+(defun consult-tex-math-swiper ()
+  "Like swiper, but only for math."
+  (interactive)
+  (let ((math '()))
+    (save-excursion
+      (goto-char 0)
+      (while
+	  (re-search-forward
+	   "\\\\begin{equation[*]?}\\(\\(.\\|\n\\)*?\\)\\\\end{equation[*]?}"
+	   nil t))
+      (push (match-string 1) math))
+    (dolist (line math)
+      (insert line))))
 
 (provide 'consult-tex)
 ;;; consult-tex.el ends here
