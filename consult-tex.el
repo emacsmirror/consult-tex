@@ -142,7 +142,11 @@
       (re-search-forward "{\\(.*\\)," nil t)
       (setq text (match-string 1)))
     (when (eq (char-before) ? ) (delete-char -1))
-    (insert (format "~\\cite{%s}" text))))
+    (if (let* ((start (save-excursion (search-backward "\\cite{")))
+	       (end (save-excursion (goto-char start) (search-forward "}"))))
+	  (and (>= (point) start) (<= (point) end)))
+	(progn (search-forward "}") (backward-char) (insert ?, text))
+      (insert (format "~\\cite{%s}" text)))))
 
 
 (defun consult-tex--find-citation ()
